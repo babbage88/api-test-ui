@@ -42,7 +42,10 @@ type Endpoint = {
   method: HttpMethod;
   path: string;
   summary: string;
+  request_type?: string;
+  response_type?: string;
   body: unknown;
+  response_example?: unknown;
 };
 
 type ApiResult = {
@@ -246,6 +249,9 @@ function App() {
                   {group === "Core" ? (
                     <DatabaseIcon className="size-4" />
                   ) : null}
+                  {group === "Database" ? (
+                    <DatabaseIcon className="size-4" />
+                  ) : null}
                   <span>{group}</span>
                 </div>
                 <div className="grid gap-1">
@@ -291,7 +297,14 @@ function App() {
               <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 border-b px-4 py-3">
                 <div>
                   <CardTitle>Request</CardTitle>
-                  <CardDescription>{activeEndpoint.summary}</CardDescription>
+                  <CardDescription>
+                    {activeEndpoint.summary}
+                    {activeEndpoint.request_type ? (
+                      <span className="ml-2 font-mono">
+                        {activeEndpoint.request_type}
+                      </span>
+                    ) : null}
+                  </CardDescription>
                 </div>
                 <CardAction className="static col-auto row-auto flex items-center gap-2">
                   <Button
@@ -384,7 +397,9 @@ function App() {
                   <CardDescription>
                     {result
                       ? `${result.status} ${result.statusText || "HTTP"} in ${result.elapsedMs}ms`
-                      : "No request sent"}
+                      : activeEndpoint.response_type
+                        ? activeEndpoint.response_type
+                        : "No request sent"}
                   </CardDescription>
                 </div>
               </div>
@@ -417,7 +432,9 @@ function App() {
                     {result?.body ||
                       (result?.bodyType === "empty"
                         ? "(empty)"
-                        : "Send a request to see the response.")}
+                        : activeEndpoint.response_example
+                          ? prettyJson(activeEndpoint.response_example)
+                          : "Send a request to see the response.")}
                   </pre>
                 </ScrollArea>
               </div>

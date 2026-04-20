@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "generate:endpoints": "cd ../infra-core && go run ./cmd/export-endpoints -out ../api-test-ui/src/endpoints.json",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx}\"",

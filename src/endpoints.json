@@ -6,7 +6,11 @@
     "method": "GET",
     "path": "/api/v1/health",
     "summary": "Service liveness",
-    "body": null
+    "response_type": "HealthResult",
+    "body": null,
+    "response_example": {
+      "status": "ok"
+    }
   },
   {
     "id": "proxy-nginx",
@@ -15,15 +19,24 @@
     "method": "POST",
     "path": "/api/v1/proxy/nginx/install",
     "summary": "Remote web proxy installer",
+    "request_type": "ProxyInstallRequest",
+    "response_type": "ProxyInstallResult",
     "body": {
       "ssh": {
         "host": "proxy.example.internal",
         "user": "ubuntu",
-        "key_path": "~/.ssh/id_ed25519",
+        "private_key_base64": "base64-encoded-private-key",
         "use_agent": true,
         "port": 22
-      },
-      "local_config_path": ""
+      }
+    },
+    "response_example": {
+      "host": "proxy.example.internal",
+      "name": "nginx",
+      "package_name": "nginx",
+      "binary_name": "nginx",
+      "service_name": "nginx",
+      "config_path": "/etc/nginx/nginx.conf"
     }
   },
   {
@@ -33,15 +46,71 @@
     "method": "POST",
     "path": "/api/v1/proxy/haproxy/install",
     "summary": "Remote web proxy installer",
+    "request_type": "ProxyInstallRequest",
+    "response_type": "ProxyInstallResult",
     "body": {
       "ssh": {
         "host": "proxy.example.internal",
         "user": "ubuntu",
-        "key_path": "~/.ssh/id_ed25519",
+        "private_key_base64": "base64-encoded-private-key",
+        "use_agent": true,
+        "port": 22
+      }
+    },
+    "response_example": {
+      "host": "proxy.example.internal",
+      "name": "haproxy",
+      "package_name": "haproxy",
+      "binary_name": "haproxy",
+      "service_name": "haproxy",
+      "config_path": "/etc/haproxy/haproxy.cfg"
+    }
+  },
+  {
+    "id": "garage-node",
+    "group": "Storage",
+    "name": "Garage node",
+    "method": "POST",
+    "path": "/api/v1/storage/s3/garage/node",
+    "summary": "Deploy a Garage S3 storage node",
+    "request_type": "GarageNodeRequest",
+    "response_type": "GarageNodeResult",
+    "body": {
+      "ssh": {
+        "host": "garage.example.internal",
+        "user": "ubuntu",
+        "private_key_base64": "base64-encoded-private-key",
         "use_agent": true,
         "port": 22
       },
-      "local_config_path": ""
+      "version": "v2.2.0",
+      "binary_path": "/usr/local/bin/garage",
+      "config_path": "/etc/garage.toml",
+      "metadata_dir": "/var/lib/garage/meta",
+      "data_dir": "/var/lib/garage/data",
+      "db_engine": "sqlite",
+      "replication_factor": 1,
+      "rpc_bind_addr": "[::]:3901",
+      "s3_api_bind_addr": "[::]:3900",
+      "s3_region": "garage",
+      "s3_root_domain": ".s3.local",
+      "s3_web_bind_addr": "[::]:3902",
+      "s3_web_root_domain": ".web.local",
+      "s3_web_index": "index.html",
+      "k2v_api_bind_addr": "[::]:3904",
+      "admin_api_bind_addr": "[::]:3903",
+      "log_level": "garage=info"
+    },
+    "response_example": {
+      "host": "garage.example.internal",
+      "binary_path": "/usr/local/bin/garage",
+      "config_path": "/etc/garage.toml",
+      "service_name": "garage",
+      "rpc_public_addr": "garage.example.internal:3901",
+      "s3_endpoint": "http://garage.example.internal:3900",
+      "admin_endpoint": "http://garage.example.internal:3903",
+      "admin_token": "generated-admin-token",
+      "metrics_token": "generated-metrics-token"
     }
   },
   {
@@ -51,11 +120,13 @@
     "method": "POST",
     "path": "/api/v1/storage/s3/garage/token",
     "summary": "Create bucket credentials",
+    "request_type": "GarageTokenRequest",
+    "response_type": "GarageTokenResult",
     "body": {
       "ssh": {
         "host": "garage.example.internal",
         "user": "ubuntu",
-        "key_path": "~/.ssh/id_ed25519",
+        "private_key_base64": "base64-encoded-private-key",
         "use_agent": true,
         "port": 22
       },
@@ -68,9 +139,46 @@
       "allow_owner": true,
       "binary_path": "/usr/local/bin/garage",
       "config_path": "/etc/garage.toml",
-      "s3_endpoint": "",
       "layout_zone": "dc1",
       "layout_capacity": "100G"
+    },
+    "response_example": {
+      "host": "garage.example.internal",
+      "s3_endpoint": "http://garage.example.internal:3900",
+      "bucket_name": "app-assets",
+      "key_name": "app-assets-key",
+      "access_key_id": "generated-access-key",
+      "secret_access_key": "generated-secret-key",
+      "mc_alias_set_command": "mc alias set garage http://garage.example.internal:3900 generated-access-key generated-secret-key"
+    }
+  },
+  {
+    "id": "valkey-install",
+    "group": "Database",
+    "name": "Install Valkey",
+    "method": "POST",
+    "path": "/api/v1/database/valkey/install",
+    "summary": "Install and configure Valkey for remote access",
+    "request_type": "ValkeyInstallRequest",
+    "response_type": "ValkeyInstallResult",
+    "body": {
+      "ssh": {
+        "host": "cache.example.internal",
+        "user": "ubuntu",
+        "private_key_base64": "base64-encoded-private-key",
+        "use_agent": true,
+        "port": 22
+      },
+      "username": "app",
+      "password": "secret",
+      "bind": "0.0.0.0",
+      "port": 6379
+    },
+    "response_example": {
+      "host": "cache.example.internal",
+      "port": 6379,
+      "username": "app",
+      "uri": "redis://app:secret@cache.example.internal:6379"
     }
   }
 ]
