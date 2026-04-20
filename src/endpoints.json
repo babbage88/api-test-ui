@@ -1,0 +1,76 @@
+[
+  {
+    "id": "health",
+    "group": "Core",
+    "name": "Health",
+    "method": "GET",
+    "path": "/api/v1/health",
+    "summary": "Service liveness",
+    "body": null
+  },
+  {
+    "id": "proxy-nginx",
+    "group": "Proxy",
+    "name": "Install nginx",
+    "method": "POST",
+    "path": "/api/v1/proxy/nginx/install",
+    "summary": "Remote web proxy installer",
+    "body": {
+      "ssh": {
+        "host": "proxy.example.internal",
+        "user": "ubuntu",
+        "key_path": "~/.ssh/id_ed25519",
+        "use_agent": true,
+        "port": 22
+      },
+      "local_config_path": ""
+    }
+  },
+  {
+    "id": "proxy-haproxy",
+    "group": "Proxy",
+    "name": "Install HAProxy",
+    "method": "POST",
+    "path": "/api/v1/proxy/haproxy/install",
+    "summary": "Remote web proxy installer",
+    "body": {
+      "ssh": {
+        "host": "proxy.example.internal",
+        "user": "ubuntu",
+        "key_path": "~/.ssh/id_ed25519",
+        "use_agent": true,
+        "port": 22
+      },
+      "local_config_path": ""
+    }
+  },
+  {
+    "id": "garage-token",
+    "group": "Storage",
+    "name": "Garage S3 token",
+    "method": "POST",
+    "path": "/api/v1/storage/s3/garage/token",
+    "summary": "Create bucket credentials",
+    "body": {
+      "ssh": {
+        "host": "garage.example.internal",
+        "user": "ubuntu",
+        "key_path": "~/.ssh/id_ed25519",
+        "use_agent": true,
+        "port": 22
+      },
+      "bucket_name": "app-assets",
+      "key_name": "app-assets-key",
+      "create_bucket": true,
+      "allow_create_buckets": false,
+      "allow_read": true,
+      "allow_write": true,
+      "allow_owner": true,
+      "binary_path": "/usr/local/bin/garage",
+      "config_path": "/etc/garage.toml",
+      "s3_endpoint": "",
+      "layout_zone": "dc1",
+      "layout_capacity": "100G"
+    }
+  }
+]
