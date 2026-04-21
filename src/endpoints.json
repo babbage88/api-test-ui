@@ -180,5 +180,36 @@
       "username": "app",
       "uri": "redis://app:secret@cache.example.internal:6379"
     }
+  },
+  {
+    "id": "mariadb-install",
+    "group": "Database",
+    "name": "Install MariaDB",
+    "method": "POST",
+    "path": "/api/v1/database/mariadb/install",
+    "summary": "Install and configure MariaDB for remote access",
+    "request_type": "MariaDBInstallRequest",
+    "response_type": "MariaDBInstallResult",
+    "body": {
+      "ssh": {
+        "host": "db.example.internal",
+        "user": "ubuntu",
+        "private_key_base64": "base64-encoded-private-key",
+        "use_agent": true,
+        "port": 22
+      },
+      "db_name": "appdb",
+      "username": "app",
+      "password": "secret",
+      "bind": "0.0.0.0",
+      "port": 3306
+    },
+    "response_example": {
+      "host": "db.example.internal",
+      "port": 3306,
+      "db_name": "appdb",
+      "username": "app",
+      "uri": "mysql://app:secret@db.example.internal:3306/appdb"
+    }
   }
 ]
